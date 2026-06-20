@@ -1,10 +1,12 @@
-import { useState } from 'react'
-
-import './App.css'
+import './App.css';
+import { RouterProvider } from 'react-router';
+import { routes } from './app.routes.jsx';
 
 const App = () => {
   return (
-    <div>App</div>
+    <div>
+      <RouterProvider router={routes} />
+    </div>
   )
 }
 
