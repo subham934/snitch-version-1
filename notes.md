@@ -235,6 +235,7 @@ export const validateRegisterUser = [
   validateRequest,
 ];
 
+//=============================================================
 
 
 ---------------------------------------
@@ -296,3 +297,50 @@ export const register = async (req, res) => {
     res.status(500).json({ message: 'Error registering user', error });
   }
 };
+
+
+//=============================================================
+
+now , in frontend, we'll install react-router
+npm i react-router
+
+now, i'll create routes file
+
+------------------------------------------------
+src/app/app.routes.js
+------------------------------------------------
+
+import { createBrowserRouter } from "react-router";
+
+export const routes = createBrowserRouter([
+    {
+        path: "/",
+        element: <h1>Hello World</h1>
+    }
+])
+
+//=============================================================
+
+now, i'll update the App.js file to use the routes
+
+------------------------------------------------
+src/app/App.jsx
+------------------------------------------------
+
+import './App.css';
+import { RouterProvider } from 'react-router';
+import { routes } from './app.routes.jsx';
+
+const App = () => {
+  return (
+    <div>
+      <RouterProvider router={routes} />
+    </div>
+  )
+}
+
+export default App
+
+//=============================================================
+if i go to localhost:5173, i should see Hello World
+

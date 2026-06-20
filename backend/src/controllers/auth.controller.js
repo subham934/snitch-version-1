@@ -54,3 +54,26 @@ export const register = async (req, res) => {
     res.status(500).json({ message: 'Error registering user', error });
   }
 };
+
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    await sendTokenResponse(user, res, 'User logged in successfully');
+  } catch (error) {
+    res.status(500).json({ message: 'Error logging in user', error });
+  }
+};
