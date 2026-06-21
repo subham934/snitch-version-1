@@ -76,13 +76,13 @@ const Register = () => {
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
           style={{ backgroundImage: "url('/streetwear_showcase.png')" }}
         ></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#131315]/60 via-[#131315]/30 to-[#131315]/90 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-[#131315]/60 via-[#131315]/30 to-[#131315]/90 pointer-events-none"></div>
 
         {/* Branding overlapping the image */}
         <div className="relative z-20 text-3xl md:text-4xl font-headline font-black text-primary-container tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
           SNITCH
         </div>
-
+        
         {/* Tagline & copy */}
         <div className="relative z-10 mt-auto pt-24">
           <span className="inline-block bg-primary-container/20 border border-primary-container/30 backdrop-blur-md text-primary-container px-3.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-4">
