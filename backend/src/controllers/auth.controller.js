@@ -42,19 +42,17 @@ export const register = async (req, res) => {
       contact,
       password,
       fullname,
-      role: isSeller ? "seller" : "buyer",
+      role: isSeller ? 'seller' : 'buyer',
     });
     //  A new user is saved in MongoDB.
     // Because my model has a pre("save") middleware, the password is hashed before being stored.
     //The role is not supplied, so the schema’s default "buyer" role is used.
 
     await sendTokenResponse(user, res, 'User registered successfully');
-    
   } catch (error) {
     res.status(500).json({ message: 'Error registering user', error });
   }
 };
-
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -76,4 +74,9 @@ export const login = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error logging in user', error });
   }
+};
+
+export const googleCallback = async (req, res) => {
+  console.log(req.user);
+  res.redirect('http://localhost:5173/');
 };
