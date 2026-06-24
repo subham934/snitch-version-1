@@ -7,7 +7,7 @@ async function sendTokenResponse(user, res, message) {
     expiresIn: '7d',
   });
 
-  res.cookie('jwt', token);
+  res.cookie('token', token);
 
   res.status(200).json({
     message,
