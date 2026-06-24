@@ -77,6 +77,35 @@ export const login = async (req, res) => {
 };
 
 export const googleCallback = async (req, res) => {
-  console.log(req.user);
+  // console.log(req.user);
+
+  const { id, displayName, emails, photos } = req.user;
+  const email = emails[0].value;
+  const profilePic = photos[0].value;
+
+  let user = await userModel.findOne({ email });
+  if (!user) {
+    // Create a new user if not found
+    user = await userModel.create({
+      email,
+      fullname: displayName,
+      profilePic,
+      googleId: id,
+      // role: 'buyer', // Default role for Google users
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      id: user._id,
+    },
+    config.JWT_SECRET,
+    {
+      expiresIn: '7d',
+    }
+  );
+
+  res.cookie('token', token);
+
   res.redirect('http://localhost:5173/');
 };

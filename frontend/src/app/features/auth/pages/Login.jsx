@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router';
 import { useAuth } from '../hook/useAuth.js';
+import ContinueWithGoogle from '../components/ContinueWithGoogle.jsx';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const Login = () => {
       <div className="w-full md:w-1/2 min-h-[40vh] md:min-h-screen flex flex-col justify-between p-12 md:p-16 relative overflow-hidden bg-surface-container-lowest">
         {/* Background Image with Dark Overlay */}
         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105" style={{ backgroundImage: "url('/streetwear_showcase.png')" }}></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#131315]/60 via-[#131315]/30 to-[#131315]/90 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-[#131315]/60 via-[#131315]/30 to-[#131315]/90 pointer-events-none"></div>
 
         {/* Branding overlapping the image */}
         <div className="relative z-20 text-3xl md:text-4xl font-headline font-black text-primary-container tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
@@ -184,8 +185,18 @@ const Login = () => {
             </div>
           </form>
 
+          <div className="my-6 flex items-center gap-4">
+            <div className="h-px flex-1 bg-outline-variant/30" />
+            <span className="font-label text-xs text-on-surface-variant">
+              or
+            </span>
+            <div className="h-px flex-1 bg-outline-variant/30" />
+          </div>
+
+          <ContinueWithGoogle text="Login with Google" />
+
           <div className="mt-8 text-center font-label text-xs text-on-surface-variant">
-            Don't have an account?{' '}
+            Don't have an account?
             <Link className="font-medium text-primary-container hover:text-primary transition-colors hover:underline underline-offset-4" to="/register">
               Sign up
             </Link>
