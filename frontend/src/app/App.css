@@ -1,34 +1,69 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #131315;
-  --color-on-background: #e5e1e4;
-  --color-primary: #ffe1a7;
-  --color-primary-container: #fbbf24;
-  --color-on-primary-container: #402d00;
-  --color-on-primary-fixed-variant: #5c4300;
+  --color-background: #FAF9F5;          /* Warm Alabaster / Premium Cream */
+  --color-on-background: #1C1917;       /* Warm Charcoal */
   
-  --color-secondary: #ffb95f;
-  --color-secondary-container: #ee9800;
-  --color-on-secondary-container: #5b3800;
+  --color-primary: #ffbf00;             /* Bright Amber Gold (#ffbf00) */
+  --color-primary-container: #ffcf40;   /* Medium Gold (#ffcf40) */
+  --color-on-primary-container: #1C1917;
+  --color-on-primary-fixed-variant: #bf9b30;
   
-  --color-surface: #131315;
-  --color-surface-bright: #39393b;
-  --color-surface-dim: #131315;
-  --color-surface-container: #201f21;
-  --color-surface-container-low: #1b1b1d;
-  --color-surface-container-lowest: #0e0e10;
-  --color-surface-container-high: #2a2a2c;
-  --color-surface-container-highest: #353437;
+  --color-secondary: #ffdc73;           /* Light Gold (#ffdc73) */
+  --color-secondary-container: #FDFCF7; /* Cream Card Background */
+  --color-on-secondary-container: #bf9b30;
   
-  --color-on-surface: #e5e1e4;
-  --color-on-surface-variant: #d3c5ac;
-  --color-outline: #9c8f79;
-  --color-outline-variant: #4f4633;
-  --color-surface-tint: #f9bd22;
-  --color-primary-fixed-dim: #f9bd22;
+  --color-surface: #FFFFFF;
+  --color-surface-bright: #FCFBF7;
+  --color-surface-dim: #F5F1E6;
+  
+  --color-surface-container: #FDFCF9;
+  --color-surface-container-low: #FCFBF7;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-high: #F4F0E6;
+  --color-surface-container-highest: #EBE5D3;
+  
+  --color-on-surface: #1C1917;
+  --color-on-surface-variant: #bf9b30;  /* Dark Gold (#bf9b30) */
+  --color-outline: #bf9b30;             /* Dark Gold Outline */
+  --color-outline-variant: #ffdc73;     /* Light Gold Outline */
+  --color-surface-tint: #ffcf40;
+  --color-primary-fixed-dim: #ffbf00;
   
   --font-headline: "Geist", "sans-serif";
   --font-body: "Geist", "sans-serif";
   --font-label: "Public Sans", "sans-serif";
+}
+
+/* Custom CSS for Drawing Borders & Premium Accents */
+.gold-draw-line {
+  position: absolute;
+  background: linear-gradient(to right, transparent, #ffcf40, transparent);
+  height: 1px;
+}
+.gold-draw-line-v {
+  position: absolute;
+  background: linear-gradient(to bottom, transparent, #ffcf40, transparent);
+  width: 1px;
+}
+
+/* Lenis Scroll Tweaks */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }

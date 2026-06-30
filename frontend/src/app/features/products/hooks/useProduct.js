@@ -18,7 +18,7 @@ export const useProduct = ()=>{
         dispatch(setSellerProducts(data.products))
         return data.products;
     }
-
+    // this handleGetSellerProduct calls the API and share the data with the slice.
 
     return {
         handleCreateProduct,
