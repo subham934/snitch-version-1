@@ -1,36 +1,50 @@
-import {createBrowserRouter} from "react-router";
-import Register from "./features/auth/pages/Register";
-import Login from "./features/auth/pages/Login";
-import CreateProduct from "./features/products/pages/CreateProduct";
-import { TransitionLayout } from "./components/TransitionLayout";
-import Dashboard from "./features/products/pages/Dashboard";
+import { createBrowserRouter } from 'react-router';
+import Register from './features/auth/pages/Register';
+import Login from './features/auth/pages/Login';
+import CreateProduct from './features/products/pages/CreateProduct';
+import { TransitionLayout } from './components/TransitionLayout';
+import Protected from './features/auth/components/Protected';
+import Dashboard from './features/products/pages/Dashboard';
+import Home from './features/products/pages/Home';
 
 export const routes = createBrowserRouter([
-    {
-        path: "/",
-        element: <TransitionLayout />,
+  {
+    path: '/',
+    element: <TransitionLayout />,
+    children: [
+      {
+        path: '/',
+        element: <Home />,
+      },
+      {
+        path: '/register',
+        element: <Register />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
+      },
+      {
+        path: '/seller',
         children: [
-            {
-                path: "/",
-                element: <h1>Hello World</h1>
-            },{
-                path: '/register',
-                element: <Register/>
-            },{
-                path: '/login',
-                element: <Login/>
-            }, {
-                path: "/seller",
-                children:[
-                    {
-                        path: "/seller/dashboard",
-                        element: <Dashboard/>
-                    },{
-                        path: "/seller/create-product",
-                        element: <CreateProduct/>
-                    }
-                ]
-            }
-        ]
-    }
-])
+          {
+            path: '/seller/dashboard',
+            element: (
+              <Protected role="seller">
+                <Dashboard />
+              </Protected>
+            ),
+          },
+          {
+            path: '/seller/create-product',
+            element: (
+              <Protected role="seller">
+                <CreateProduct />
+              </Protected>
+            ),
+          },
+        ],
+      },
+    ],
+  },
+]);

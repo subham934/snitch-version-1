@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useProduct } from '../hooks/useProduct.js';
+import { useTransitionNavigate } from '../../../components/TransitionLayout.jsx';
 import gsap from 'gsap';
 
 const CreateProduct = () => {
   const { handleCreateProduct } = useProduct();
+  const transitionNavigate = useTransitionNavigate();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -110,10 +112,19 @@ const CreateProduct = () => {
       <main className="py-14 px-4 md:px-12 relative z-10">
         <div className="max-w-5xl mx-auto">
 
-          {/* Heading */}
-          <div className="mb-10 animate-field">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1C1917] mb-2">Create Product</h1>
-            <p className="text-[#bf9b30] text-base">Add a new drop to your SNITCH store</p>
+          {/* Heading + Back button */}
+          <div className="mb-10 animate-field flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#1C1917] mb-2">Create Product</h1>
+              <p className="text-[#bf9b30] text-base">Add a new drop to your SNITCH store</p>
+            </div>
+            <button
+              onClick={() => transitionNavigate('/seller/dashboard')}
+              className="flex items-center gap-2 bg-[#bf9b30] hover:bg-[#ffbf00] hover:text-[#1C1917] text-white font-bold text-sm px-5 py-3 rounded-lg transition-all duration-200 active:scale-[0.97] shadow-[0_4px_16px_rgba(191,155,48,0.25)] whitespace-nowrap self-start sm:self-auto cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+              Back to Dashboard
+            </button>
           </div>
 
           {/* Form card */}

@@ -117,7 +117,7 @@ const Register = () => {
     }
 
     try {
-      await handleRegister({
+      const user = await handleRegister({
         fullname: formData.fullname.trim(),
         email: formData.email.trim(),
         contact: formData.contact.trim(),
@@ -128,7 +128,11 @@ const Register = () => {
       
       // Slow transformation exit to other page
       setTimeout(() => {
-        transitionNavigate('/');
+        if (user && user.role === 'seller') {
+          transitionNavigate('/seller/dashboard');
+        } else {
+          transitionNavigate('/');
+        }
       }, 1500);
     } catch (err) {
       // Error is handled by Redux state

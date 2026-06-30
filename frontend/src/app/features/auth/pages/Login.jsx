@@ -106,15 +106,20 @@ const Login = () => {
     }
 
     try {
-      await handleLogin({
+      const user = await handleLogin({
         email: formData.email.trim(),
         password: formData.password,
       });
+
       setSuccessMsg('Login successful!');
-      
-      // Slow transformation exit to other page
+
+      // Slow transformation exit to other page based on user role
       setTimeout(() => {
-        transitionNavigate('/');
+        if (user.role === 'seller') {
+          transitionNavigate('/seller/dashboard');
+        } else {
+          transitionNavigate('/');
+        }
       }, 1500);
     } catch (err) {
       // Error is handled by Redux state

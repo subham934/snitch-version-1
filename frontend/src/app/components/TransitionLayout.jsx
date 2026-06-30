@@ -110,7 +110,7 @@ export const TransitionLayout = () => {
         {/* Layer 2: Main Champagne Gold */}
         <div
           ref={curtainLayer2}
-          className="fixed inset-0 bg-[#FAF9F5] border-t-2 border-b-2 border-[#ffcf40] pointer-events-none flex flex-col items-center justify-center"
+          className="fixed inset-0 bg-background border-t-2 border-b-2 border-[#ffcf40] pointer-events-none flex flex-col items-center justify-center"
           style={{ zIndex: 9999, willChange: 'transform' }}
         >
           <div className="text-center relative">
