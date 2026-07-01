@@ -4,6 +4,7 @@ import { useProduct } from '../hooks/useProduct';
 import { useAuth } from '../../auth/hook/useAuth';
 import { useTransitionNavigate } from '../../../components/TransitionLayout.jsx';
 import gsap from 'gsap';
+import { Navigate } from 'react-router';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const formatCurrency = (amount, currency = 'INR') =>
@@ -200,6 +201,7 @@ const Home = () => {
                 const primaryImage = product.images?.[0]?.url || null;
                 return (
                   <div
+                    
                     key={product._id}
                     className="product-card-anim bg-white rounded-2xl border border-[#ffdc73]/40 shadow-[0_4px_24px_rgba(191,155,48,0.06)] overflow-hidden flex flex-col group hover:shadow-[0_8px_32px_rgba(191,155,48,0.15)] hover:border-[#ffbf00]/40 transition-all duration-300 relative"
                   >
@@ -247,7 +249,8 @@ const Home = () => {
                           </p>
                         </div>
                         <button
-                          className="bg-[#1C1917] text-white hover:bg-[#ffbf00] hover:text-[#1C1917] text-[10px] uppercase font-bold tracking-widest px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
+                        onClick={()=> transitionNavigate(`/product/${product._id}`)}
+                          className="bg-[#1C1917] text-white hover:bg-[#ffbf00] cursor-pointer hover:text-[#1C1917] text-[10px] uppercase font-bold tracking-widest px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
                         >
                           View Drop
                         </button>

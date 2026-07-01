@@ -1,4 +1,4 @@
-import {createProduct, getSellerProducts, getAllProducts} from "../services/product.api.js";
+import {createProduct, getSellerProducts, getAllProducts, getProductById} from "../services/product.api.js";
 import { useDispatch } from "react-redux";
 import { setSellerProducts, setProducts } from "../state/product.slice.js";
 
@@ -29,9 +29,16 @@ export const useProduct = ()=>{
     // this handleGetAllProducts calls the API and share the data with the slice.
     
 
+    async function handleGetProductById(productId){
+        const data = await getProductById(productId);
+        return data.product;
+    }
+
+
     return {
         handleCreateProduct,
         handleGetSellerProduct,
-        handleGetAllProducts
+        handleGetAllProducts,
+        handleGetProductById
     }
 } 

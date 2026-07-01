@@ -76,7 +76,6 @@ export const login = async (req, res) => {
   }
 };
 
-
 export const googleCallback = async (req, res) => {
   // console.log(req.user);
 
@@ -111,27 +110,26 @@ export const googleCallback = async (req, res) => {
   res.redirect('http://localhost:5173/');
 };
 
-
 export const getMe = async (req, res) => {
-    const user = req.user;
+  const user = req.user;
 
-    return res.status(200).json({ 
-        success: true, 
-        message: "User fetched successfully", 
-        user:{
-            id: user._id,
-            email: user.email,
-            contact: user.contact,
-            fullname: user.fullname,
-            role: user.role,
-        } 
-    });
-}
+  return res.status(200).json({
+    success: true,
+    message: 'User fetched successfully',
+    user: {
+      id: user._id,
+      email: user.email,
+      contact: user.contact,
+      fullname: user.fullname,
+      role: user.role,
+    },
+  });
+};
 
 export const logout = async (req, res) => {
-    res.clearCookie('token');
-    return res.status(200).json({
-        success: true,
-        message: 'Logged out successfully'
-    });
-}
+  res.clearCookie('token');
+  return res.status(200).json({
+    success: true,
+    message: 'Logged out successfully',
+  });
+};
