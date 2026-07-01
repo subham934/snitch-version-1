@@ -12,12 +12,13 @@ const formatDate = (iso) =>
   new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
 // ── Product Card ──────────────────────────────────────────────────────────────
-const ProductCard = ({ product, index }) => {
+const ProductCard = ({ product, index, onClick }) => {
   const primaryImage = product.images?.[0]?.url || null;
 
   return (
     <div
-      className="product-card bg-white rounded-xl border border-[#ffdc73]/50 shadow-[0_4px_20px_rgba(191,155,48,0.07)] overflow-hidden flex flex-col group hover:shadow-[0_8px_32px_rgba(191,155,48,0.18)] hover:border-[#ffbf00]/40 transition-all duration-300"
+      onClick={onClick}
+      className="product-card bg-white rounded-xl border border-[#ffdc73]/50 shadow-[0_4px_20px_rgba(191,155,48,0.07)] overflow-hidden flex flex-col group hover:shadow-[0_8px_32px_rgba(191,155,48,0.18)] hover:border-[#ffbf00]/40 transition-all duration-300 cursor-pointer"
     >
       {/* Image */}
       <div className="relative overflow-hidden bg-surface-container aspect-4/3">
@@ -209,7 +210,7 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {sellerProducts.map((product, i) => (
-              <ProductCard key={product._id} product={product} index={i} />
+              <ProductCard onClick={()=>transitionNavigate(`/seller/product/${product._id}`)} key={product._id} product={product} index={i} />
             ))}
           </div>
         )}
