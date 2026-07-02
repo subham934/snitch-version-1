@@ -1337,7 +1337,7 @@ export const useProduct = () => {
 //==========================
 
 
-
+Look for the SellerProductDetails.jsx and ProductDetail.jsx page and try to understand what is happening, look at video-day-150
 
 
 
