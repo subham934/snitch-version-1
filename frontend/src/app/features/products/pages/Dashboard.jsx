@@ -108,22 +108,35 @@ const Dashboard = () => {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const ctx = containerRef.current;
+    const header   = ctx.querySelectorAll('.dash-header');
+    const statCards = ctx.querySelectorAll('.stat-card');
+    const productCards = ctx.querySelectorAll('.product-card');
+
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    tl.fromTo('.dash-header',
-      { y: -20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5 }
-    )
-    .fromTo('.stat-card',
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.08, duration: 0.45 },
-      '-=0.25'
-    )
-    .fromTo('.product-card',
-      { y: 24, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.07, duration: 0.45 },
-      '-=0.3'
-    );
+    if (header.length) {
+      tl.fromTo(header,
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5 }
+      );
+    }
+
+    if (statCards.length) {
+      tl.fromTo(statCards,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.08, duration: 0.45 },
+        '-=0.25'
+      );
+    }
+
+    if (productCards.length) {
+      tl.fromTo(productCards,
+        { y: 24, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.07, duration: 0.45 },
+        '-=0.3'
+      );
+    }
   }, [sellerProducts]);
 
   // Derived stats

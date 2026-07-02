@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useProduct } from '../hooks/useProduct';
@@ -20,7 +20,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedAttributes, setSelectedAttributes] = useState({});
   const [accordions, setAccordions] = useState({
     details: true,
     shipping: false,
@@ -34,7 +34,7 @@ const ProductDetail = () => {
       if (!data) {
         throw new Error('Product not found');
       }
-      setProduct(data);
+      setProduct(data?.product || data);
       setActiveImageIndex(0);
     } catch (err) {
       console.error(err);
@@ -50,6 +50,150 @@ const ProductDetail = () => {
     }
   }, [productId]);
 
+  // Initialize selectedAttributes on product load
+  useEffect(() => {
+    if (product?.variants?.length > 0) {
+      const firstVariantAttrs = product.variants[0].attributes || {};
+      const initialAttrs = typeof firstVariantAttrs.entries === 'function'
+        ? Object.fromEntries(firstVariantAttrs.entries())
+        : firstVariantAttrs;
+      setSelectedAttributes(initialAttrs);
+    }
+  }, [product]);
+
+  const activeVariant = useMemo(() => {
+    if (!product?.variants || product.variants.length === 0) return null;
+    
+    let bestVariant = null;
+    let maxMatches = -1;
+
+    product.variants.forEach(v => {
+      if (!v.attributes) return;
+
+      const vAttrs = typeof v.attributes.entries === 'function'
+        ? Object.fromEntries(v.attributes.entries())
+        : v.attributes;
+
+      // Flatten array of objects if Mongoose stores it that way
+      let flatVAttrs = {};
+      if (Array.isArray(vAttrs)) {
+        vAttrs.forEach(a => {
+          if (a && a.key) flatVAttrs[a.key] = a.value;
+        });
+      } else {
+        flatVAttrs = vAttrs;
+      }
+
+      let matches = 0;
+      let mismatches = 0;
+
+      Object.entries(selectedAttributes).forEach(([key, val]) => {
+        if (flatVAttrs[key] === val) {
+          matches++;
+        } else if (flatVAttrs[key] !== undefined) {
+          mismatches++;
+        }
+      });
+
+      if (mismatches === 0 && matches > maxMatches) {
+        maxMatches = matches;
+        bestVariant = v;
+      }
+    });
+
+    return bestVariant;
+  }, [product, selectedAttributes]);
+
+  const availableAttributes = useMemo(() => {
+    if (!product?.variants) return {};
+    const attrs = {};
+    product.variants.forEach(variant => {
+      if (variant.attributes) {
+        const vAttrs = typeof variant.attributes.entries === 'function'
+          ? Object.fromEntries(variant.attributes.entries())
+          : variant.attributes;
+
+        let flatVAttrs = {};
+        if (Array.isArray(vAttrs)) {
+          vAttrs.forEach(a => {
+            if (a && a.key) flatVAttrs[a.key] = a.value;
+          });
+        } else {
+          flatVAttrs = vAttrs;
+        }
+
+        Object.entries(flatVAttrs).forEach(([key, value]) => {
+          if (!attrs[key]) attrs[key] = new Set();
+          attrs[key].add(value);
+        });
+      }
+    });
+    Object.keys(attrs).forEach(key => {
+      attrs[key] = Array.from(attrs[key]);
+    });
+    return attrs;
+  }, [product]);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [activeVariant]);
+
+  const handleAttributeChange = (attrName, value) => {
+    const newAttrs = { ...selectedAttributes, [attrName]: value };
+    
+    let bestVariant = null;
+    let maxMatches = -1;
+
+    product.variants.forEach(v => {
+      if (!v.attributes) return;
+
+      const vAttrs = typeof v.attributes.entries === 'function'
+        ? Object.fromEntries(v.attributes.entries())
+        : v.attributes;
+
+      let flatVAttrs = {};
+      if (Array.isArray(vAttrs)) {
+        vAttrs.forEach(a => {
+          if (a && a.key) flatVAttrs[a.key] = a.value;
+        });
+      } else {
+        flatVAttrs = vAttrs;
+      }
+
+      if (flatVAttrs[attrName] !== value) return;
+
+      let matches = 0;
+      Object.entries(selectedAttributes).forEach(([key, val]) => {
+        if (key !== attrName && flatVAttrs[key] === val) {
+          matches++;
+        }
+      });
+
+      if (matches > maxMatches) {
+        maxMatches = matches;
+        bestVariant = v;
+      }
+    });
+
+    if (bestVariant) {
+      const bestAttrs = typeof bestVariant.attributes.entries === 'function'
+        ? Object.fromEntries(bestVariant.attributes.entries())
+        : bestVariant.attributes;
+
+      let flatBestAttrs = {};
+      if (Array.isArray(bestAttrs)) {
+        bestAttrs.forEach(a => {
+          if (a && a.key) flatBestAttrs[a.key] = a.value;
+        });
+      } else {
+        flatBestAttrs = bestAttrs;
+      }
+      setSelectedAttributes(flatBestAttrs);
+    } else {
+      setSelectedAttributes(newAttrs);
+    }
+  };
+
   const toggleAccordion = (section) => {
     setAccordions((prev) => ({
       ...prev,
@@ -57,20 +201,23 @@ const ProductDetail = () => {
     }));
   };
 
-  const images = product?.images || [];
-  const activeImageUrl = images[activeImageIndex]?.url || null;
+  const displayImages = (activeVariant?.images && activeVariant.images.length > 0)
+    ? activeVariant.images
+    : (product?.images && product.images.length > 0 ? product.images : []);
+
+  const activeImageUrl = displayImages[activeImageIndex]?.url || null;
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
-    if (images.length > 0) {
-      setActiveImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    if (displayImages.length > 0) {
+      setActiveImageIndex((prev) => (prev === 0 ? displayImages.length - 1 : prev - 1));
     }
   };
 
   const handleNextImage = (e) => {
     e.stopPropagation();
-    if (images.length > 0) {
-      setActiveImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    if (displayImages.length > 0) {
+      setActiveImageIndex((prev) => (prev === displayImages.length - 1 ? 0 : prev + 1));
     }
   };
 
@@ -256,9 +403,9 @@ const ProductDetail = () => {
               <div className="lg:col-span-7 flex flex-col md:flex-row gap-4 self-start">
                 
                 {/* Thumbnails Column — all images shown stacked, no scroll/slider */}
-                {images.length > 1 && (
+                {displayImages.length > 1 && (
                   <div className="flex flex-row md:flex-col gap-3 order-2 md:order-1 shrink-0 pb-2 md:pb-0">
-                    {images.map((image, idx) => (
+                    {displayImages.map((image, idx) => (
                       <button
                         key={image._id || idx}
                         onClick={() => setActiveImageIndex(idx)}
@@ -299,7 +446,7 @@ const ProductDetail = () => {
                   </div>
 
                   {/* Swipe Navigation Buttons */}
-                  {images.length > 1 && (
+                  {displayImages.length > 1 && (
                     <>
                       <button
                         onClick={handlePrevImage}
@@ -319,9 +466,9 @@ const ProductDetail = () => {
                   )}
 
                   {/* Bottom Right Image Counter */}
-                  {images.length > 0 && (
+                  {displayImages.length > 0 && (
                     <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider shadow-md">
-                      {activeImageIndex + 1} / {images.length}
+                      {activeImageIndex + 1} / {displayImages.length}
                     </div>
                   )}
                 </div>
@@ -353,7 +500,12 @@ const ProductDetail = () => {
                 <div className="mb-6 pb-5 border-b border-[#ffdc73]/20">
                   <p className="text-[9px] font-label font-bold uppercase tracking-widest text-[#bf9b30]/60 mb-1">Total Price</p>
                   <p className="text-[#bf9b30] font-headline font-black text-3xl leading-none">
-                    {formatCurrency(product.price.amount, product.price.currency)}
+                    {(() => {
+                      const displayPrice = (activeVariant?.price?.amount)
+                        ? activeVariant.price
+                        : product.price;
+                      return formatCurrency(displayPrice.amount, displayPrice.currency);
+                    })()}
                   </p>
                 </div>
 
@@ -365,30 +517,44 @@ const ProductDetail = () => {
                   </p>
                 </div>
 
-                {/* Sizes Selection (Interactive Static Element) */}
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-2.5">
-                    <span className="text-[10px] font-label font-bold uppercase tracking-widest text-[#bf9b30]/60">Select Size</span>
-                    <button className="text-[9px] font-label font-bold uppercase tracking-widest text-[#bf9b30] hover:text-[#ffbf00] transition-colors cursor-pointer bg-transparent border-none">
-                      Size Guide
-                    </button>
+                {/* Dynamic Variants / Options Selection */}
+                {Object.entries(availableAttributes).map(([attrName, values]) => (
+                  <div key={attrName} className="mb-6 animate-fadeIn">
+                    <div className="flex justify-between items-center mb-2.5">
+                      <span className="text-[10px] font-label font-bold uppercase tracking-widest text-[#bf9b30]/60">
+                        Select {attrName}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((val) => {
+                        const isSelected = selectedAttributes[attrName] === val;
+                        return (
+                          <button
+                            key={val}
+                            onClick={() => handleAttributeChange(attrName, val)}
+                            className={`min-w-12 h-12 px-4 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center border uppercase tracking-wider ${
+                              isSelected
+                                ? 'bg-[#1C1917] text-white border-[#1C1917] shadow-md scale-[0.98]'
+                                : 'bg-white text-[#1C1917] border-[#ffdc73]/40 hover:border-[#ffbf00]/50 hover:bg-[#ffdc73]/10'
+                            }`}
+                          >
+                            {val}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    {['S', 'M', 'L', 'XL', 'XXL'].map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`w-12 h-12 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center border ${
-                          selectedSize === size
-                            ? 'bg-[#1C1917] text-white border-[#1C1917] shadow-md scale-[0.98]'
-                            : 'bg-white text-[#1C1917] border-[#ffdc73]/40 hover:border-[#ffbf00]/50 hover:bg-surface-container'
-                        }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
+                ))}
+
+                {/* Stock Level Badge */}
+                {activeVariant && activeVariant.stock !== undefined && (
+                  <div className="mb-6 flex items-center gap-1.5 animate-fadeIn">
+                    <span className={`w-2 h-2 rounded-full ${activeVariant.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                    <span className={`text-[10px] font-label font-bold uppercase tracking-wider ${activeVariant.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {activeVariant.stock > 0 ? `${activeVariant.stock} units in stock` : 'Out of stock'}
+                    </span>
                   </div>
-                </div>
+                )}
 
                 {/* Two Action Buttons (Visual Only) */}
                 <div className="flex flex-col sm:flex-row gap-3.5 mb-8 pt-4">
