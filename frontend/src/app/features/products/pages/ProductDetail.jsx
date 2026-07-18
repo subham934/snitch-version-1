@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useProduct } from '../hooks/useProduct';
 import { useAuth } from '../../auth/hook/useAuth';
 import { useTransitionNavigate } from '../../../components/TransitionLayout.jsx';
+import { useCart } from '../../cart/hook/useCart.js';
 
 // Helper to format prices in INR
 const formatCurrency = (amount, currency = 'INR') =>
@@ -15,6 +16,7 @@ const ProductDetail = () => {
   const { handleGetProductById } = useProduct();
   const { handleLogout } = useAuth();
   const user = useSelector((state) => state.auth.user);
+  const { handleAddItem } = useCart()
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +27,8 @@ const ProductDetail = () => {
     details: true,
     shipping: false,
   });
+
+  
 
   async function fetchProductDetails() {
     try {
@@ -561,6 +565,8 @@ const ProductDetail = () => {
                   {/* Add To Cart */}
                   <button
                     className="flex-1 bg-white hover:bg-[#1C1917] text-[#1C1917] hover:text-white border-2 border-[#1C1917] font-label font-bold text-xs uppercase tracking-widest py-4 rounded-xl transition-all duration-200 active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+
+                    onClick={() => handleAddItem({ productId: product._id, variantId: activeVariant._id })}
                   >
                     <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
                     Add To Cart

@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateUser } from '../middlewares/auth.middleware.js';
 import { validateAddToCart } from '../validator/cart.validator.js';
-import { addToCart } from '../controllers/cart.controller.js';
+import { addToCart, getCart } from '../controllers/cart.controller.js';
 
 const router = express.Router();
 
@@ -20,5 +20,14 @@ router.post(
   validateAddToCart,
   addToCart
 );
+
+
+/**
+ * @route GET /api/cart
+ * @desc Get user's cart
+ * @access Private
+ */
+
+router.get('/', authenticateUser, getCart);
 
 export default router;
