@@ -26,7 +26,7 @@ backend>src>model>cart.model.js
 import mongoose from 'mongoose';
 
 const cartSchema = new mongoose.Schema({
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
@@ -98,35 +98,37 @@ now that the schema is done, we'll make changes in cart.model.js and product.mod
 backend>src>models>cart.model.js
 --------------------------------
 
-import mongoose from 'mongoose';
-import priceSchema from './price.schema.js';
+import mongoose from "mongoose";
+import priceSchema from "./price.schema.js";
 
 const cartSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-  },
-  items: [
-    {
-      product: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'product',
-      },
-      variant: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'product.variants',
-      },
-      quantity: {
-        type: Number,
-        default: 1,
-      },
-      price: {
-        type: priceSchema,
-        required: true,
-      },
+        ref: 'user',
+        required: true
     },
-  ],
-});
+    items: [
+        {
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'product',
+                required: true
+            },
+            variant: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'product.variants'
+            },
+            quantity: {
+                type: Number,
+                default: 1
+            },
+            price: {
+                type: priceSchema,
+                required: true
+            }
+        }
+    ]
+})
 
 const cartModel = mongoose.model('cart', cartSchema);
 
@@ -777,3 +779,5 @@ export const useCart = () => {
 }
 
 //=====================================
+
+we'll make small changes in ProductDetail.jsx, look at the video
